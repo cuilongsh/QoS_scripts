@@ -3,7 +3,7 @@ sku=`rdmsr -0 -p0 0x614`;
 sku_tdp=$((16#${sku:12}));
 sku_tdp_watt=`expr $sku_tdp / 8`;
 
-for i in {1..5}; do 
+for i in {1..3600}; do 
 wrmsr -p0 0x64f 0; 
 energy_1=`rdmsr -0 -p0 0x611`;
 sleep 1;
