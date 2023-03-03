@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {1..23}
+for i in {1..32}
 do
     echo "docker stop and remove $i-nginx-web"
     docker stop $i-nginx-web;docker rm $i-nginx-web

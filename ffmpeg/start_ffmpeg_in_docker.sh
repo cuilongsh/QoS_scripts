@@ -7,6 +7,7 @@ cpupower idle-set -d 3
 #cpupower frequency-set -u 2700Mhz
 #cpupower frequency-set -d 2700Mhz
 
+socket0_HT=96
 
 for i in {0..7}
 do
@@ -20,7 +21,11 @@ do
     #11x 2c 6/4 threads FFMPEG,physical core only:same
     #3c 8 threads FFMPEG,physical core only:22-23@3Ghz
     #4c 9 threads, physical core only:17-18@3Ghz
-    cpu_1st=$(($i * 4 ))
+    ##cpu_1st=$(($i * 4 ))
+    ##cpuset="$cpu_1st-$(($cpu_1st + 3))"
+
+    #only on sibling core
+    cpu_1st=$(($i * 4 + $socket0_HT))
     cpuset="$cpu_1st-$(($cpu_1st + 3))"
 
     #7x 6c 16 threads FFMPEG:20S
@@ -36,8 +41,8 @@ do
     echo $cpuset
     #1080p video
     echo "docker run -d --name ffmpg_lp_$i --cpuset-cpus=$cpuset --cpus=4 --privileged  -v $PWD/mp4:/root/mp4 --entrypoint=/root/mp4/loop_ffmpeg.sh  ffmpeg"
-    #docker run -d --name ffmpg_lp_$i --cpuset-cpus=$cpuset --cpus=0.8 --privileged  -v $PWD/mp4:/root/mp4 --entrypoint=/root/mp4/loop_ffmpeg.sh  ffmpeg 
-    docker run -d --name ffmpg_lp_$i --cpuset-cpus=$cpuset --cpus=4 --privileged  -v $PWD/mp4:/root/mp4 --entrypoint=/root/mp4/loop_ffmpeg.sh  ffmpeg 
+    #docker run -d --name ffmpg_lp_$i --cpuset-cpus=$cpuset --cpus=0.8 --privileged  -v $PWD/mp4:/root/mp4 --entrypoint=/root/mp4/loop_ffmpeg.sh  ffmpeg_eric:v1 
+    docker run -d --name ffmpg_lp_$i --cpuset-cpus=$cpuset --cpus=4 --privileged  -v $PWD/mp4:/root/mp4 --entrypoint=/root/mp4/loop_ffmpeg.sh  ffmpeg_eric:v1 
     echo "pause:check the memory bandwidth"
     read myinput
 
