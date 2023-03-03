@@ -139,8 +139,8 @@ cpupower idle-set -d 2
 cpupower idle-set -d 3
 
 #Set max, min to 2.7Ghz:
-cpupower frequency-set -u 2700Mhz
-cpupower frequency-set -d 2700Mhz
+##cpupower frequency-set -u 2700Mhz
+##cpupower frequency-set -d 2700Mhz
 
   pqos -R
   CORES=$1
