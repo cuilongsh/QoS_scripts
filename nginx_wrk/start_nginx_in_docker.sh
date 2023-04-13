@@ -4,23 +4,23 @@ cpupower idle-set -d 2
 cpupower idle-set -d 3
 
 #Set max, min to 2.7Ghz:
-cpupower frequency-set -u 2700Mhz
-cpupower frequency-set -d 2700Mhz
+#cpupower frequency-set -u 2700Mhz
+#cpupower frequency-set -d 2700Mhz
 
-sibling_start=96
+sibling_start=64
 
-for i in {1..32}
+for i in {1..11}
 do
     cpu_1st=$(($i))
-    #cpu_2nd=$(($cpu_1st+64))
-    #cpuset="$cpu_1st,$cpu_2nd"
-    cpuset=$cpu_1st
+    cpu_2nd=$(($cpu_1st+$sibling_start))
+    cpuset="$cpu_1st,$cpu_2nd"
+    #cpuset=$cpu_1st
     echo "start docker $i-nginx-web cpus=$cpuset"
     docker run --privileged=true --name "$i-nginx-web" -d --cpuset-cpus=$cpuset --cpuset-mems=0 -v $PWD/nginx_web.conf:/etc/nginx/nginx.conf:ro nginx 
 done
 
 
-for i in {1..32}
+for i in {1..11}
 do
     docker_ip=$(($i+1))
     #load_balence 20 ==> 1
