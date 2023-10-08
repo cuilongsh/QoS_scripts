@@ -7,15 +7,17 @@ cpupower idle-set -d 3
 #cpupower frequency-set -u 2700Mhz
 #cpupower frequency-set -d 2700Mhz
 
-socket0_HT=96
+socket0_HT=64
+start_cpu=12
 
-for i in {0..7}
+
+for i in {0..9}
 do
     #11x 4c 16 threads FFMPEG:30S
     ##used as one of base line, max memory throughput
-    #cpu_1st=$(($i * 2 + 0))
-    #cpu_2nd=$(($cpu_1st + 48))
-    #cpuset="$cpu_1st-$(($cpu_1st + 1)),$cpu_2nd-$(($cpu_2nd +1))"
+    cpu_1st=$(($i * 2 + 0+$start_cpu))
+    cpu_2nd=$(($cpu_1st + $socket0_HT+$start_cpu))
+    cpuset="$cpu_1st-$(($cpu_1st + 1)),$cpu_2nd-$(($cpu_2nd +1))"
 
     #11x 2c 8 threads FFMPEG,physical core only:36
     #11x 2c 6/4 threads FFMPEG,physical core only:same
@@ -25,8 +27,8 @@ do
     ##cpuset="$cpu_1st-$(($cpu_1st + 3))"
 
     #only on sibling core
-    cpu_1st=$(($i * 4 + $socket0_HT))
-    cpuset="$cpu_1st-$(($cpu_1st + 3))"
+    #cpu_1st=$(($i * 4 + $socket0_HT))
+    #cpuset="$cpu_1st-$(($cpu_1st + 3))"
 
     #7x 6c 16 threads FFMPEG:20S
     #cpu_1st=$(($i * 3 + 1))
