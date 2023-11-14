@@ -51,7 +51,7 @@ lp_process_id=$!
 mlc --loaded_latency -b1000M -R -t20 -T -k$start_1st_half-$end_1st_half -d0| grep 00000 | awk '{print "HP=" $3}' 
 #wait for lp process finished
 #other wise, it may impact the next mlc workload calc
-wait $! 
+wait $lp_process_id
 
 
 done
