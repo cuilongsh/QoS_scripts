@@ -63,6 +63,7 @@ wrmsr -p 359 0x1a4 0xef
 #echo off > /sys/devices/system/cpu/smt/control
 
 i=2
+:<<HEAVY_WORKLOAD
                         wait_mlc_exit
                         echo "test started W$i" >>3_instance_mlc.log
 			mlc -c$SNC0_LATENCY_CORE  -e --loaded_latency -d0 -W$i -k$MLC_SNC0_CORES -b1g -t30 -j0 | grep 00000 | awk '{print "SNC0_only =" $2,$3}'  >>3_instance_mlc.log
@@ -74,13 +75,63 @@ i=2
                         mlc -c$SNC2_LATENCY_CORE  -e --loaded_latency -d0 -W$i -k$MLC_SNC2_CORES -b1g -t30 -j2 | grep 00000 | awk '{print "SNC2_only =" $2,$3}'  >>3_instance_mlc.log
 
 			wait_mlc_exit
-                        time mlc -c$SNC0_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC0_CORES -b1g -t30 -j0 | grep 00000 | awk '{print "SNC0_mix  =" $2,$3}'  >>3_instance_mlc.log &
+                        time mlc -c$SNC0_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC0_CORES -b1g -t30 -j2 | grep 00000 | awk '{print "SNC0_mix  =" $2,$3}'  >>3_instance_mlc.log &
 
                         time mlc -c$SNC1_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC1_CORES -b1g -t30 -j1 | grep 00000 | awk '{print "SNC1_mix  =" $2,$3}'  >>3_instance_mlc.log &
                         
-                        time mlc -c$SNC2_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC2_CORES -b1g -t30 -j2 | grep 00000 | awk '{print "SNC2_mix  =" $2,$3}'  >>3_instance_mlc.log &
+                        time mlc -c$SNC2_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC2_CORES -b1g -t30 -j0 | grep 00000 | awk '{print "SNC2_mix  =" $2,$3}'  >>3_instance_mlc.log &
 
                         wait_mlc_exit
+HEAVY_WORKLOAD
+
+#core scaling ion SNC0
+#for endcore in {0..38}
+#do
+#                        wait_mlc_exit
+#                        echo "test started W$i" >>1_instance_mlc.log
+#                        mlc -c$SNC0_LATENCY_CORE  -e --loaded_latency -d0 -W$i -k"0-$endcore" -b1g -t30 -j0 | grep 00000 | awk '{print "SNC0_only =" $2,$3}'  >>3_instance_mlc.log
+#done
+
+
+#:<<MIDDLE_WORKLOAD
+#middle pressure
+			wait_mlc_exit
+
+			time mlc -c$SNC1_LATENCY_CORE -e --loaded_latency -d0 -W$i -k40-51 -b1g -t30 -j1 | grep 00000 | awk '{print "SNC1_only =" $2,$3}'  >>3_instance_mlc.log &
+
+			wait_mlc_exit
+
+                        time mlc -c$SNC0_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC0_CORES -b1g -t30 -j2 | grep 00000 | awk '{print "SNC0_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        time mlc -c$SNC1_LATENCY_CORE -e --loaded_latency -d0 -W$i -k40-51 -b1g -t30 -j1 | grep 00000 | awk '{print "SNC1_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        time mlc -c$SNC2_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC2_CORES -b1g -t30 -j0 | grep 00000 | awk '{print "SNC2_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        wait_mlc_exit
+
+
+#MIDDLE_WORKLOAD
+
+
+:<<LIGHT_WORKLOAD
+#low presure
+			wait_mlc_exit
+
+			time mlc -c$SNC1_LATENCY_CORE -e --loaded_latency -d0 -W$i -k40 -b1g -t30 -j1 | grep 00000 | awk '{print "SNC1_only =" $2,$3}'  >>3_instance_mlc.log &
+
+			wait_mlc_exit
+
+                        time mlc -c$SNC0_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC0_CORES -b1g -t30 -j2 | grep 00000 | awk '{print "SNC0_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        time mlc -c$SNC1_LATENCY_CORE -e --loaded_latency -d0 -W$i -k40 -b1g -t30 -j1 | grep 00000 | awk '{print "SNC1_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        time mlc -c$SNC2_LATENCY_CORE -e --loaded_latency -d0 -W$i -k$MLC_SNC2_CORES -b1g -t30 -j0 | grep 00000 | awk '{print "SNC2_mix  =" $2,$3}'  >>3_instance_mlc.log &
+
+                        wait_mlc_exit
+
+
+LIGHT_WORKLOAD
+
 
 #restore the settings,reenable prefetch on all core
 # for i in {0..191}; do wrmsr -p $i 0x1a4 0x2; done
