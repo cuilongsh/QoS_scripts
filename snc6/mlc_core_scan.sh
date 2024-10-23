@@ -8,24 +8,19 @@
 #NUMA node4 CPU(s):     80-98,200-218
 #NUMA node5 CPU(s):     99-119,219-239
 
+#Caches (sum of all):
+#L1d:                   5.6 MiB (120 instances)--48KB for each core
+#L1i:                   7.5 MiB (120 instances)--64KB for each core
+#L2:                    240 MiB (120 instances)--2MB for each core
+#L3:                    504 MiB (1 instance)-- 4MB for each core
 
 for core_count in $(seq 1 1 119);do
 
-start_1st_half=40
-start_2nd_half=280
-
-end_1st_half=$(($core_count/2 -1+$start_1st_half))
-end_2nd_half=$(($end_1st_half + $start_2nd_half-$start_1st_half))
-#echo $start_1st_half - $end_1st_half,$start_2nd_half - $end_2nd_half
 echo $core_count
-#physical core
-mlc --loaded_latency -b1000M -R -t20 -k1-$core_count -d0| grep 00000 | awk '{print $2,$3}' >> core_scaling.txt
+#physical core,1GB buffer,for DRAM 
+mlc --loaded_latency -b1000M -R -t20 -k1-$core_count -d0| grep 00000 | awk '{print $2,$3}' >> core_scaling_1GB.txt
 
-#add one more hyper thread 
-#mlc --loaded_latency -b1000M -R -t20 -T -k$start_1st_half-$(($end_1st_half+1)),$start_2nd_half-$end_2nd_half -d0| grep 00000 | awk '{print $3}'
-
-
-##with physical core only
-#mlc --loaded_latency -b1000M -R -t20 -T -k$start_1st_half-$end_1st_half -d0| grep 00000 | awk '{print $3}' 
+#physical core,4MB buffer,for L3
+mlc --loaded_latency -b4M -R -t20 -k1-$core_count -d0| grep 00000 | awk '{print $2,$3}' >> core_scaling_4MB.txt
 
 done
