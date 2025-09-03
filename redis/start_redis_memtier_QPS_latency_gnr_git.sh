@@ -86,7 +86,8 @@ function colocation(){
     ps aux |grep -E 'redis-server\ \*:|$MEMTIER_CMD \-s|starter.py\ imc_config.json'|awk '{print $2}' | while read line;
  do kill -9 $line; done
     #docker stop speccpuBwaves
-    killall mlc
+    ##keep mlc, wait for the finish report
+    ##killall mlc
 }
 
 function set_mba_10(){
