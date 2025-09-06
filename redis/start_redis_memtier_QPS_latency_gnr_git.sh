@@ -16,7 +16,8 @@ start_redis-server(){
     echo "start redis server"
     for i in $(seq 0 1 $redis_end_core); do
       echo "running redis on core$i port@$port"
-      numactl -C $i $REDIS_CMD --port ${port} --protected-mode no > /dev/null 2>&1&
+      redis_ht=$(($i+120))
+      numactl -C $i,$redis_ht $REDIS_CMD --port ${port} --protected-mode no --io-threads 2 --io-threads-do-reads yes  > /dev/null 2>&1&
       last_redis=$!
       port=$((${port}+1))
     done
@@ -34,8 +35,9 @@ start_memtier_benchmark(){
     for i in $(seq 40 1 $memtier_end_core); do
       echo "running memtier on core$i,port@$port" 
       ##local connection
+      memtier_ht=$(($i+120))
       ##numactl -C $i $MEMTIER_CMD -s localhost -p ${port} --pipeline=30 -c 1 -t 1 -d 1024 --key-maximum=42949 --key-pattern=G:G --key-stddev=1177 --ratio=1:1 --distinct-client-seed --random-data --test-time=60 --run-count=1 --hide-histogram &>logs/${1}/redis-core${i}.log &
-      numactl -C $i ip netns exec ns0 $MEMTIER_CMD -s 192.168.0.2 -p ${port} --pipeline=30 -c 1 -t 1 -d 1024 --key-maximum=42949 --key-pattern=G:G --key-stddev=1177 --ratio=1:1 --distinct-client-seed --random-data --test-time=60 --run-count=1 --hide-histogram &>logs/${1}/redis-core${i}.log &
+      numactl -C $i,$memtier_ht ip netns exec ns0 $MEMTIER_CMD -s 192.168.0.2 -p ${port} --pipeline=30 -c 2 -t 2 -d 1024 --key-maximum=42949 --key-pattern=G:G --key-stddev=1177 --ratio=1:1 --distinct-client-seed --random-data --test-time=60 --run-count=1 --hide-histogram &>logs/${1}/redis-core${i}.log &
       last_memtier=$!
       echo $last_memtier
       port=$((${port}+1))
