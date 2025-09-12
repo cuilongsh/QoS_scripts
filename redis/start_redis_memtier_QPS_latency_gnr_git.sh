@@ -98,8 +98,8 @@ function set_mba_10(){
 #map CLOS2 to perlbench
     #pqos -e "llc:1=0x7fff"
     #pqos -e "llc:2=0x7fff"
-    pqos -e "mba:1=100"
-    pqos -e "mba:2=10"
+    ##pqos -e "mba:1=100"
+    ##pqos -e "mba:2=10"
 #Apply to
 #HP
 
@@ -111,9 +111,9 @@ function set_mba_10(){
 #MEMTIER_CORES={{72-95,168-191}}
 
  
-    pqos -a "core:1=0-47"
-    pqos -a "core:2=96-143"
-    sleep 3
+    ##pqos -a "core:1=0-47"
+    ##pqos -a "core:2=96-143"
+    ##sleep 3
 }
 
 main() {
@@ -127,7 +127,7 @@ cpupower idle-set -d 3
 ##cpupower frequency-set -u 2700Mhz
 ##cpupower frequency-set -d 2700Mhz
 
-  pqos -R
+  ##pqos -R
   CORES=$1
   CORESIndex=$[$CORES-1]
 
@@ -175,16 +175,16 @@ cpupower idle-set -d 3
 ##  rdmsr -p 1 0xb1;rdmsr -p 1 0xb0
 ##  sleep 1;
 
-  sync
-  killall pqos
+  ##sync
+  ##killall pqos
   sync
   sed -e 's/^M/\n/g' ./logs/4/redis-core48.log |awk '{print $10,$17}' > ./logs/hwdrc_raw_48.log
-  grep -r "0-15,64-" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_0-11_bwaves_LP.txt
-  grep -r "16-31,80" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_12-23_redis_HP.txt
-  grep -r "48-63,112" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_36-47_memtier_HP.txt
+  ##grep -r "0-15,64-" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_0-11_bwaves_LP.txt
+  ##grep -r "16-31,80" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_12-23_redis_HP.txt
+  ##grep -r "48-63,112" ./logs/pqos_mon_test.log|awk '{print $5,$6}' > ./logs/mbm_36-47_memtier_HP.txt
  
-  pqos -R
-  pqos -r -t 1
+  ##pqos -R
+  ##pqos -r -t 1
 }
 
 main "$@"
