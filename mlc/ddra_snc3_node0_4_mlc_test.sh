@@ -28,7 +28,7 @@ mlc --loaded_latency -d0 -W3 -t20 -T -k30-39,150-159 -b300M |grep "00000" |awk '
 mlc --loaded_latency -d0 -W3 -t20 -T -k0-9,120-129 -b300M |grep "00000" |awk '{print "COS1",$2,$3}' >>ddra_COS1.txt & 
 mlc --loaded_latency -d0 -W3 -t20 -T -k10-19,130-139 -b300M |grep "00000" |awk '{print "COS2",$2,$3}' >>ddra_COS2.txt & 
 mlc --loaded_latency -d0 -W3 -t20 -T -k20-29,140-149 -b300M |grep "00000" |awk '{print "COS3",$2,$3}' >>ddra_COS3.txt & 
-mlc --loaded_latency -d0 -W3 -t20 -T -k30-39,150-159 -b300M |grep "00000" |awk '{print "COS4",$2,$3}' >>ddra_COS4.txt & 
+mlc --loaded_latency -d0 -W3 -t20 -T -k30-39,150-159 -b300M |grep "00000" |awk '{print "COS4",$2,$3}' >>ddra_COS4.txt  
 
 #wait_mlc_started /sys/fs/resctrl/COS7/tasks 247
 
