@@ -81,6 +81,7 @@ def main():
     print(f"Done! Output: {output_file}")
 
     print("=== 10s Peak Window Avg (MB/s) ===")
+
     values = []
     for cos in ['COS1', 'COS2', 'COS3', 'COS4']:
         val = df[f"{cos}_peakWindowAvg_10s"].max()
